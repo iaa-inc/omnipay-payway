@@ -78,7 +78,7 @@ class Response extends AbstractResponse
     /**
      * Get Transaction reference
      */
-    public function getTransactionReference(): string
+    public function getTransactionReference(): ?string
     {
         return $this->getData('receiptNumber');
     }
@@ -94,7 +94,7 @@ class Response extends AbstractResponse
     /**
      * Get Contact details
      */
-    public function getContact(): array
+    public function getContact(): ?array
     {
         return $this->getData('contact');
     }
@@ -102,7 +102,7 @@ class Response extends AbstractResponse
     /**
      * Get status
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->getData('status');
     }
