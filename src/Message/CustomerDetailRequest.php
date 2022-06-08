@@ -2,7 +2,10 @@
 /**
  * PaywayRest Customer Detail Request
  */
+
 namespace Omnipay\PaywayRest\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
  * PaywayRest Customer Detail Request
@@ -11,26 +14,29 @@ namespace Omnipay\PaywayRest\Message;
  */
 class CustomerDetailRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     */
+    public function getData(): array
     {
         $this->validate(
             'customerNumber'
         );
 
-        return $data = array();
+        return [];
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->endpoint . '/customers/' . $this->getCustomerNumber();
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'GET';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }

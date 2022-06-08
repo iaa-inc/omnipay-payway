@@ -1,215 +1,261 @@
-<?php
+<?php /** @noinspection PhpUnused */
+
 namespace Omnipay\PaywayRest;
 
+use JetBrains\PhpStorm\ArrayShape;
 use Omnipay\Common\AbstractGateway;
+use Omnipay\PaywayRest\Message\BankAccountListRequest;
+use Omnipay\PaywayRest\Message\CheckNetworkRequest;
+use Omnipay\PaywayRest\Message\CreateCustomerRequest;
+use Omnipay\PaywayRest\Message\CreateSingleUseBankTokenRequest;
+use Omnipay\PaywayRest\Message\CreateSingleUseCardTokenRequest;
+use Omnipay\PaywayRest\Message\CustomerDetailRequest;
+use Omnipay\PaywayRest\Message\MerchantListRequest;
+use Omnipay\PaywayRest\Message\PurchaseRequest;
+use Omnipay\PaywayRest\Message\RegularPaymentRequest;
+use Omnipay\PaywayRest\Message\TransactionDetailRequest;
+use Omnipay\PaywayRest\Message\UpdateCustomerContactRequest;
 
 /**
  * PayWay Credit Card gateway
  */
 class Gateway extends AbstractGateway
 {
-    public function getName()
+    public function getName(): string
     {
         return 'Westpac PayWay Credit Card';
     }
 
-    public function getDefaultParameters()
+    #[ArrayShape(['apiKeyPublic' => "string", 'apiKeySecret' => "string", 'merchantId' => "string", 'useSecretKey' => "false"])] public function getDefaultParameters(): array
     {
         return array(
             'apiKeyPublic' => '',
             'apiKeySecret' => '',
-            'merchantId'   => '',
+            'merchantId' => '',
             'useSecretKey' => false,
         );
     }
 
     /**
      * Get API publishable key
+     *
      * @return string
      */
-    public function getApiKeyPublic()
+    public function getApiKeyPublic(): string
     {
         return $this->getParameter('apiKeyPublic');
     }
 
     /**
      * Set API publishable key
-     * @param  string $value API publishable key
+     *
+     * @param string $value API publishable key
      */
-    public function setApiKeyPublic($value)
+    public function setApiKeyPublic(string $value): self
     {
         return $this->setParameter('apiKeyPublic', $value);
     }
 
     /**
      * Get API secret key
+     *
      * @return string
      */
-    public function getApiKeySecret()
+    public function getApiKeySecret(): string
     {
         return $this->getParameter('apiKeySecret');
     }
 
     /**
      * Set API secret key
-     * @param  string $value API secret key
+     *
+     * @param string $value API secret key
      */
-    public function setApiKeySecret($value)
+    public function setApiKeySecret(string $value): self
     {
         return $this->setParameter('apiKeySecret', $value);
     }
 
     /**
      * Get Merchant
+     *
      * @return string Merchant ID
      */
-    public function getMerchantId()
+    public function getMerchantId(): string
     {
         return $this->getParameter('merchantId');
     }
 
     /**
      * Set Merchant
-     * @param  string $value Merchant ID
+     *
+     * @param string $value Merchant ID
      */
-    public function setMerchantId($value)
+    public function setMerchantId(string $value): self
     {
         return $this->setParameter('merchantId', $value);
     }
 
     /**
      * Set SSL Certificate Path
-     * @param  string $value SSL Certificate Path
+     *
+     * @param string $value SSL Certificate Path
      */
-    public function setSSLCertificatePath($value)
+    public function setSSLCertificatePath(string $value): self
     {
         return $this->setParameter('sslCertificatePath', $value);
     }
 
     /**
      * Get SSL Certificate Path
+     *
      * @return string SSL Certificate Path
      */
-    public function getSSLCertificatePath()
+    public function getSSLCertificatePath(): string
     {
         return $this->getParameter('sslCertificatePath');
     }
 
     /**
      * Test the PayWay gateway
-     * @param  array  $parameters Request parameters
-     * @return \Omnipay\PaywayRest\Message\CheckNetworkRequest
+     *
+     * @param array $parameters Request parameters
+     * @return CheckNetworkRequest
      */
-    public function testGateway(array $parameters = array())
+    public function testGateway(array $parameters = array()): Message\CheckNetworkRequest
     {
-        return $this->createRequest(
+        /** @var Message\CheckNetworkRequest $response */
+        $response = $this->createRequest(
             '\Omnipay\PaywayRest\Message\CheckNetworkRequest',
             $parameters
         );
+        return $response;
     }
 
     /**
      * Purchase request
      *
-     * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\PurchaseRequest
+     * @param array $options
+     * @return PurchaseRequest|RegularPaymentRequest
      */
-    public function purchase(array $parameters = array())
+    public function purchase(array $options = array()): Message\PurchaseRequest|Message\RegularPaymentRequest
     {
-        /** @todo create customer before payment if none supplied */
+        //TODO: create customer before payment if none supplied
 
         // schedule regular payment
-        if (isset($parameters['frequency']) && $parameters['frequency'] !== 'once') {
-            return $this->createRequest('\Omnipay\PaywayRest\Message\RegularPaymentRequest', $parameters);
+        if (isset($options['frequency']) && $options['frequency'] !== 'once') {
+            /** @var Message\RegularPaymentRequest $response */
+            $response = $this->createRequest('\Omnipay\PaywayRest\Message\RegularPaymentRequest', $options);
+            return $response;
         }
 
         // process once-off payment
-        return $this->createRequest('\Omnipay\PaywayRest\Message\PurchaseRequest', $parameters);
+        /** @var Message\PurchaseRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\PurchaseRequest', $options);
+        return $response;
     }
 
     /**
      * Create singleUseTokenId with a CreditCard
      *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\CreateSingleUseCardTokenRequest
+     * @return CreateSingleUseCardTokenRequest
      */
-    public function createSingleUseCardToken(array $parameters = array())
+    public function createSingleUseCardToken(array $parameters = array()): Message\CreateSingleUseCardTokenRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\CreateSingleUseCardTokenRequest', $parameters);
+        /** @var Message\CreateSingleUseCardTokenRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\CreateSingleUseCardTokenRequest', $parameters);
+        return $response;
     }
 
     /**
      * Create singleUseTokenId with a Bank Account
      *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\CreateSingleUseBankTokenRequest
+     * @return CreateSingleUseBankTokenRequest
      */
-    public function createSingleUseBankToken(array $parameters = array())
+    public function createSingleUseBankToken(array $parameters = array()): Message\CreateSingleUseBankTokenRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\CreateSingleUseBankTokenRequest', $parameters);
+        /** @var Message\CreateSingleUseBankTokenRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\CreateSingleUseBankTokenRequest', $parameters);
+        return $response;
     }
 
     /**
      * Create Customer
      *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\CreateCustomerRequest
+     * @return CreateCustomerRequest
      */
-    public function createCustomer(array $parameters = array())
+    public function createCustomer(array $parameters = array()): Message\CreateCustomerRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\CreateCustomerRequest', $parameters);
+        /** @var Message\CreateCustomerRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\CreateCustomerRequest', $parameters);
+        return $response;
     }
 
     /**
      * Update Customer contact details
      *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\UpdateCustomerContactRequest
+     * @return UpdateCustomerContactRequest
      */
-    public function updateCustomerContact(array $parameters = array())
+    public function updateCustomerContact(array $parameters = array()): Message\UpdateCustomerContactRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\UpdateCustomerContactRequest', $parameters);
+        /** @var Message\UpdateCustomerContactRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\UpdateCustomerContactRequest', $parameters);
+        return $response;
     }
 
     /**
      * Get Customer details
-     * @param  array  $parameters
-     * @return \Omnipay\PaywayRest\Message\CustomerDetailRequest
+     *
+     * @param array $parameters
+     * @return CustomerDetailRequest
      */
-    public function getCustomerDetails(array $parameters = array())
+    public function getCustomerDetails(array $parameters = array()): Message\CustomerDetailRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\CustomerDetailRequest', $parameters);
-
+        /** @var Message\CustomerDetailRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\CustomerDetailRequest', $parameters);
+        return $response;
     }
 
     /**
      * Get Transaction details
-     * @param  array  $parameters
-     * @return \Omnipay\PaywayRest\Message\TransactionDetailRequest
+     *
+     * @param array $parameters
+     * @return TransactionDetailRequest
      */
-    public function getTransactionDetails(array $parameters = array())
+    public function getTransactionDetails(array $parameters = array()): Message\TransactionDetailRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\TransactionDetailRequest', $parameters);
-
+        /** @var Message\TransactionDetailRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\TransactionDetailRequest', $parameters);
+        return $response;
     }
 
     /**
      * Get List of Merchants
+     *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\MerchantListRequest
+     * @return MerchantListRequest
      */
-    public function getMerchants(array $parameters = array())
+    public function getMerchants(array $parameters = array()): Message\MerchantListRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\MerchantListRequest', $parameters);
+        /** @var Message\MerchantListRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\MerchantListRequest', $parameters);
+        return $response;
     }
 
     /**
      * Get List of Bank Accounts
+     *
      * @param array $parameters
-     * @return \Omnipay\PaywayRest\Message\BankAccountListRequest
+     * @return BankAccountListRequest
      */
-    public function getBankAccounts(array $parameters = array())
+    public function getBankAccounts(array $parameters = array()): Message\BankAccountListRequest
     {
-        return $this->createRequest('\Omnipay\PaywayRest\Message\BankAccountListRequest', $parameters);
+        /** @var Message\BankAccountListRequest $response */
+        $response = $this->createRequest('\Omnipay\PaywayRest\Message\BankAccountListRequest', $parameters);
+        return $response;
     }
 }

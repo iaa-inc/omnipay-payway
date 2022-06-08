@@ -11,9 +11,9 @@ namespace Omnipay\PaywayRest\Message;
  */
 class MerchantListRequest extends AbstractRequest
 {
-    public function getData()
+    public function getData(): array
     {
-        return $data = array();
+        return [];
     }
 
     public function getEndpoint()
@@ -21,12 +21,12 @@ class MerchantListRequest extends AbstractRequest
         return $this->endpoint . '/merchants';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'GET';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }

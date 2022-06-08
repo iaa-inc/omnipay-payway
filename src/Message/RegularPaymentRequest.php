@@ -3,7 +3,10 @@
 /**
  * PaywayRest Regular Payment Request
  */
+
 namespace Omnipay\PaywayRest\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
  * PaywayRest Regular Payment Request
@@ -13,43 +16,46 @@ namespace Omnipay\PaywayRest\Message;
  */
 class RegularPaymentRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     */
+    public function getData(): array
     {
         $this->validate(
             'customerNumber',
             'regularPrincipalAmount'
         );
 
-        $data = array(
-            'frequency'              => $this->getFrequency(),
-            'nextPaymentDate'        => $this->getNextPaymentDate(),
+        $data = [
+            'frequency' => $this->getFrequency(),
+            'nextPaymentDate' => $this->getNextPaymentDate(),
             'regularPrincipalAmount' => $this->getRegularPrincipalAmount(),
-        );
+        ];
 
-        if ($this->getNextPrincipalAmount()) {
-            $data['nextPrincipalAmount'] = $this->getNextPrincipalAmount();
+        if ($nextPrincipalAmount = $this->getNextPrincipalAmount()) {
+            $data['nextPrincipalAmount'] = $nextPrincipalAmount;
         }
-        if ($this->getNumberOfPaymentsRemaining()) {
-            $data['numberOfPaymentsRemaining'] = $this->getNumberOfPaymentsRemaining();
+        if ($numberOfPaymentsRemaining = $this->getNumberOfPaymentsRemaining()) {
+            $data['numberOfPaymentsRemaining'] = $numberOfPaymentsRemaining;
         }
-        if ($this->getFinalPrincipalAmount()) {
-            $data['finalPrincipalAmount'] = $this->getFinalPrincipalAmount();
+        if ($finalPrincipalAmount = $this->getFinalPrincipalAmount()) {
+            $data['finalPrincipalAmount'] = $finalPrincipalAmount;
         }
 
         return $data;
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->endpoint . '/customers/' . $this->getCustomerNumber() . '/schedule';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'PUT';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }

@@ -1,5 +1,5 @@
 {
-    "name": "rotassator/omnipay-payway-restapi",
+    "name": "iaa-inc/omnipay-payway",
     "type": "library",
     "description": "PayWay REST API gateway for Omnipay payment processing library",
     "keywords": [
@@ -13,24 +13,27 @@
         "purchase",
         "token"
     ],
-    "homepage": "https://github.com/rotassator/omnipay-payway-restapi",
+    "homepage": "https://github.com/iaa-inc/omnipay-payway",
     "license": "MIT",
     "authors": [
         {
-            "name": "Steve Dixon",
-            "email": "steve@rotassator.com"
+            "name": "Nick Pratley",
+            "email": "nick@npratley.net"
         }
     ],
-    "config": {
-        "bin-dir": "bin/"
-    },
     "autoload": {
         "psr-4": { "Omnipay\\PaywayRest\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "~3.0"
+        "php": "^8",
+        "omnipay/common": "^3.0"
     },
     "require-dev": {
-        "omnipay/tests": "~3.0"
+        "omnipay/tests": "^4.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.0.x-dev"
+        }
     }
 }

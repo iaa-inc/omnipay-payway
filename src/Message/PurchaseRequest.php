@@ -3,7 +3,10 @@
 /**
  * PaywayRest Purchase Request
  */
+
 namespace Omnipay\PaywayRest\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
  * PaywayRest Purchase Request
@@ -13,7 +16,10 @@ namespace Omnipay\PaywayRest\Message;
  */
 class PurchaseRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     */
+    public function getData(): array
     {
         $this->validate(
             'customerNumber',
@@ -22,39 +28,39 @@ class PurchaseRequest extends AbstractRequest
         );
 
         $data = array(
-            'customerNumber'  => $this->getCustomerNumber(),
+            'customerNumber' => $this->getCustomerNumber(),
             'transactionType' => 'payment',
             'principalAmount' => $this->getPrincipalAmount(),
-            'currency'        => $this->getCurrency(),
+            'currency' => $this->getCurrency(),
         );
 
-        if ($this->getOrderNumber()) {
-            $data['orderNumber'] = $this->getOrderNumber();
+        if ($orderNumber = $this->getOrderNumber()) {
+            $data['orderNumber'] = $orderNumber;
         }
-        if ($this->getMerchantId()) {
-            $data['merchantId'] = $this->getMerchantId();
+        if ($merchantId = $this->getMerchantId()) {
+            $data['merchantId'] = $merchantId;
         }
-        if ($this->getBankAccountId()) {
-            $data['bankAccountId'] = $this->getBankAccountId();
+        if ($bankAccountId = $this->getBankAccountId()) {
+            $data['bankAccountId'] = $bankAccountId;
         }
-        if ($this->getSingleUseTokenId()){
-            $data['singleUseTokenId'] = $this->getSingleUseTokenId();
+        if ($singleUseTokenId = $this->getSingleUseTokenId()) {
+            $data['singleUseTokenId'] = $singleUseTokenId;
         }
 
         return $data;
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->endpoint . '/transactions';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'POST';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }

@@ -3,7 +3,10 @@
 /**
  * PaywayRest Create Customer Request
  */
+
 namespace Omnipay\PaywayRest\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
  * PaywayRest Create Customer Request
@@ -12,15 +15,18 @@ namespace Omnipay\PaywayRest\Message;
  */
 class CreateCustomerRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     */
+    public function getData(): array
     {
         $this->validate('singleUseTokenId');
 
-        $data = array(
+        $data = [
             'singleUseTokenId' => $this->getSingleUseTokenId(),
-            'merchantId'       => $this->getMerchantId(),
-            'bankAccountId'    => $this->getBankAccountId(),
-        );
+            'merchantId' => $this->getMerchantId(),
+            'bankAccountId' => $this->getBankAccountId(),
+        ];
 
         $this->addToData($data, array(
             'orderNumber',
@@ -38,22 +44,23 @@ class CreateCustomerRequest extends AbstractRequest
         return $data;
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         // check for specified customer reference
         $customerNumber = $this->getCustomerNumber();
+
         // add customer number to URL if specified
         $ending = ($customerNumber) ? '/' . $customerNumber : '';
 
         return $this->endpoint . '/customers' . $ending;
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return $this->getCustomerNumber() ? 'PUT' : 'POST';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }
