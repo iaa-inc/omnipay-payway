@@ -95,9 +95,9 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     /**
      * Get single-use token
-     * @return string Token key
+     * @return ?string Token key
      */
-    public function getSingleUseTokenId(): string
+    public function getSingleUseTokenId(): ?string
     {
         return $this->getParameter('singleUseTokenId');
     }
